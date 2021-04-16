@@ -26,14 +26,16 @@ def recv_array(socket, flags=0, copy=True, track=False):
 
 class ImageStreamer(object):
 
+    address = None
     stream = None
 
     def __init__(self, host, port):
         ctx = zmq.Context()
         address = "tcp://%s:%d" % (host, port)
-        LOG.debug('image stream connecting to: %s' % address)
+        LOG.debug('image stream connecting (bind) to: %s' % address)
         sock = ctx.socket(zmq.PULL)
-        sock.connect(address)
+        sock.bind(address)
+        self.address = address
         self.stream = sock
 
     def get_next_image(self, block=True, copy=True):
